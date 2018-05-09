@@ -1,10 +1,12 @@
 m=1
-t=./test10000.txt
+t=./json.log
 run:
 	java -cp build/classes:mutants/$(m) org.json.JSONTest $(t)  $(m)
 
-compile:
+compilex:
 	javac -d build/xclasses src/JSON.java
+
+compile:
 	javac -cp build/xclasses -d build/classes src/JSONTest.java src/XJSON.java  src/JSONFilter.java
 
 compilemutants:
@@ -20,4 +22,4 @@ clobber:
 	rm -rf build mutants json.log mutants.log
 
 createmutants:
-	./major/bin/javac -J-Dmajor.export.mutants=true -XMutator:ALL src/JSON.java
+	./major/bin/javac -d build/mclasses -J-Dmajor.export.mutants=true -XMutator:ALL src/JSON.java
