@@ -1,7 +1,7 @@
 m=1
 t=./json.log
 run:
-	java -cp build/classes:mutants/$(m) org.json.JSONTest $(t)  $(m)
+	java -cp build/classes:mutants/$(m) org.json.JSONTest $(t) | tee build/$(m).log
 
 compilex:
 	javac -d build/xclasses src/JSON.java

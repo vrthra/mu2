@@ -15,30 +15,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 public class JSONTest {
-  static XJSONArray xjsonObject;
-  static JSONArray jsonObject;
-  static int MaxSeconds = 5;
+  static String xjson;
+  static String json;
+  static int MaxSeconds = 1;
   static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public static int testJSON(String str) throws Exception {
-    jsonObject = null;
-    xjsonObject = null;
-    final Runnable xJsonTask = new Thread() {
-      @Override
-      public void run() { xjsonObject = new XJSONArray(str); }
-    };
+    xjson = XJSON.testThis(str);
+    json = null;
     final Runnable jsonTask = new Thread() {
       @Override
-      public void run() { jsonObject = new JSONArray(str); }
+      public void run() { json = JSON.testThis(str); }
     };
-
-    final Future xjsonFuture = executor.submit(xJsonTask);
     final Future jsonFuture = executor.submit(jsonTask);
-    // xjson should not throw exceptions!
-    xjsonFuture.get(MaxSeconds, TimeUnit.SECONDS);
     try {
-      jsonFuture.get(5, TimeUnit.SECONDS);
-      return jsonObject.toString().equals(xjsonObject.toString()) == true ? 1 : 0;
+      jsonFuture.get(MaxSeconds, TimeUnit.SECONDS);
+      if (json == null) return -1;
+
+      return json.equals(xjson) ? 1 : 0;
     } catch (TimeoutException te) {
       return -2;
     } catch (Exception ex) {
@@ -48,7 +42,7 @@ public class JSONTest {
       } else if (th instanceof NullPointerException) {
         return -1;
       } else {
-        th.printStackTrace();
+        ex.printStackTrace();
         throw new Exception(th);
       }
     }
@@ -62,23 +56,28 @@ public class JSONTest {
       StringBuffer stringBuffer = new StringBuffer();
       String line;
       int count = 0;
-      System.out.println(args[1]);
-      while ((line = bufferedReader.readLine()) != null) {
-        System.out.println(line);
-        int testJsonResult = 0;
-        testJsonResult = testJSON("[" + line + "]");
-        if (testJsonResult == 1) {
-          System.out.println("1");
-        } else if (testJsonResult == -2) {
-          System.out.println("t");
-        } else if (testJsonResult == -1) {
-          System.out.println("-1");
-        } else if (testJsonResult == 0) {
-          System.out.println("0");
-        } else {
-          throw new Exception(line + " " + testJsonResult);
+      try{
+        while ((line = bufferedReader.readLine()) != null) {
+          System.err.println(">\t" + line);
+          int testJsonResult = 0;
+          testJsonResult = testJSON(line);
+          if (testJsonResult == 1) {
+            System.out.println("1");
+          } else if (testJsonResult == -2) {
+            System.out.println("t");
+          } else if (testJsonResult == -1) {
+            System.out.println("-1");
+          } else if (testJsonResult == -3) {
+            System.out.println("?");
+          } else if (testJsonResult == 0) {
+            System.out.println("0");
+          } else {
+            throw new Exception(line + " " + testJsonResult);
+          }
+          count++;
         }
-        count++;
+      } catch (Exception ex) {
+        ex.printStackTrace();
       }
       fileReader.close();
       if (!executor.isTerminated()) executor.shutdownNow();

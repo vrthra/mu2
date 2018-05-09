@@ -4452,12 +4452,13 @@ public class JSON {
                 throw new JSONException(jsonStr);
         }
     }
-    /*public static void main(String[] args) {
-        testThis("[[]]");
+    public static void main(String[] args) {
+        /*testThis("[[]]");
         testThis("[1,{}]");
         testThis("[]");
         testThis("[1,2]");
         testThis("{}");
-        testThis("{\"a\":1, \"b\":2}");
-    }*/
+        testThis("{\"a\":1, \"b\":2}");*/
+        testThis(args[0]);
+    }
 }
