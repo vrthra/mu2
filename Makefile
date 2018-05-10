@@ -1,3 +1,5 @@
+allmutantclasses=$(addsuffix /org/json/JSON.class,$(addprefix mutants/,$(mutants)))
+.PRECIOUS: $(allmutantclasses)
 m=1
 t=./json.log
 run:
@@ -9,8 +11,9 @@ compilex:
 compile:
 	javac -cp build/xclasses -d build/classes src/JSONTest.java src/XJSON.java  src/JSONFilter.java
 
-compilemutants:
-	for i in mutants/*; do echo $$i; javac -d $$i/ $$i/org/json/*.java; done
+compilemutants: $(allmutantclasses)
+	@ls $(allmutantclasses)
+	#for i in mutants/*; do echo $$i; javac -d $$i/ $$i/org/json/*.java; done
 
 teststr: | build
 	python3 ./bin/grammar-fuzz.py | tee build/json.original.log | java -cp ./build/classes org.json.JSONFilter | tee json.log | nl
@@ -24,15 +27,21 @@ clobber:
 createmutants:
 	./major/bin/javac -d build/mclasses -J-Dmajor.export.mutants=true -XMutator:ALL src/JSON.java
 
-build/%.lst: | build
+build/%.lst: mutants/%/org/json/JSON.class | build
 	$(MAKE) run m=$*
 	mv build/$*.log build/$*.lst
 
 mutants:=$(patsubst mutants/%,%,$(wildcard mutants/*))
 
-allmutants:=$(addsuffix .lst,$(addprefix build/,$(mutants)))
+mutants/%/org/json/JSON.class: mutants/%/org/json/JSON.java
+	javac -d mutants/$*/ $<
 
-all: $(allmutants)
+allresult:=$(addsuffix .lst,$(addprefix build/,$(mutants)))
+
+all: $(allresult)
 	@echo done
 
 build: ; mkdir -p build
+
+echo:
+	@echo $(allmutantclasses)
