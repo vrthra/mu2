@@ -49,6 +49,11 @@ echo:
 	@echo $(allmutantclasses)
 
 
-mkills.csv:
-	./bin/count_killing.rb > mkills.tmp
-	mv mkills.tmp mkills.csv
+nmutants.csv:
+	./bin/count_killing.rb > nmutants.tmp
+	mv nmutants.tmp nmutants.csv
+
+nktests.csv: nmutants.csv
+	./bin/count_tests.rb > nktests.tmp < nmutants.csv
+	mv nktests.tmp nktests.csv
+
