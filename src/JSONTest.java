@@ -62,7 +62,7 @@ public class JSONTest {
         JSON j = new JSON();
         JSONException e = new JSONException("TEST");
         while ((line = bufferedReader.readLine()) != null) {
-          System.err.println(">\t" + line);
+          //System.err.println(">\t" + line);
           int testJsonResult = 0;
           testJsonResult = testJSON(line);
           if (testJsonResult == 1) {

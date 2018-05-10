@@ -1,9 +1,11 @@
 allmutantclasses=$(addsuffix /org/json/JSON.class,$(addprefix mutants/,$(mutants)))
 .PRECIOUS: $(allmutantclasses)
+.SECONDARY:  $(allmutantclasses)
+
 m=1
 t=./json.log
 run:
-	java -cp build/classes:mutants/$(m) org.json.JSONTest $(t) | tee build/$(m).log
+	java -cp build/classes:mutants/$(m) org.json.JSONTest $(t) > build/$(m).log
 
 compilex:
 	javac -d build/xclasses src/JSON.java
