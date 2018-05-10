@@ -23,3 +23,16 @@ clobber:
 
 createmutants:
 	./major/bin/javac -d build/mclasses -J-Dmajor.export.mutants=true -XMutator:ALL src/JSON.java
+
+build/%.lst: | build
+	$(MAKE) run m=$*
+	mv build/$*.log build/$*.lst
+
+mutants:=$(patsubst mutants/%,%,$(wildcard mutants/*))
+
+allmutants:=$(addsuffix .lst,$(addprefix build/,$(mutants)))
+
+all: $(allmutants)
+	@echo done
+
+build: ; mkdir -p build

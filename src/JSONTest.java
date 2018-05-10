@@ -41,9 +41,11 @@ public class JSONTest {
         return -1;
       } else if (th instanceof NullPointerException) {
         return -1;
+      } else if (th instanceof StringIndexOutOfBoundsException) {
+        return -1;
       } else {
         ex.printStackTrace();
-        throw new Exception(th);
+        return -1;
       }
     }
   }
@@ -56,7 +58,9 @@ public class JSONTest {
       StringBuffer stringBuffer = new StringBuffer();
       String line;
       int count = 0;
-      try{
+      try {
+        JSON j = new JSON();
+        JSONException e = new JSONException("TEST");
         while ((line = bufferedReader.readLine()) != null) {
           System.err.println(">\t" + line);
           int testJsonResult = 0;
@@ -76,8 +80,13 @@ public class JSONTest {
           }
           count++;
         }
+      } catch (NoClassDefFoundError ex) {
+        System.out.println("E");
+        System.exit(-1);
       } catch (Exception ex) {
+        System.out.println("E");
         ex.printStackTrace();
+        System.exit(-1);
       }
       fileReader.close();
       if (!executor.isTerminated()) executor.shutdownNow();
