@@ -47,3 +47,8 @@ build: ; mkdir -p build
 
 echo:
 	@echo $(allmutantclasses)
+
+
+mkills.csv:
+	./bin/count_killing.rb > mkills.tmp
+	mv mkills.tmp mkills.csv
